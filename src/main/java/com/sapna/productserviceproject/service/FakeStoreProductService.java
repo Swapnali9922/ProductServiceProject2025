@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class FakeStoreProductService {
 
@@ -40,4 +43,32 @@ public class FakeStoreProductService {
 
         return product;
     }
+
+    public List<Product> getAllProducts(){
+        List<Product> response=new ArrayList<>();
+        ResponseEntity<FakeStoreProductServicedtos[]> fakestoreproducts=restTemplate.getForEntity("https://fakestoreapi.com/products", FakeStoreProductServicedtos[].class);
+        //next step
+       System.out.println("StatusCode:"+fakestoreproducts.getStatusCode());
+        for(FakeStoreProductServicedtos fakestorepro :fakestoreproducts.getBody()){
+                response.add(converttoproduct(fakestorepro));
+        }
+        //convert the response into List<products>
+        return response;
+    }
+
+
+
+    public Product createProduct(String title,String imageurl,String cattitle,String description){
+        Product response;
+        FakeStoreProductServicedtos requestBody=new FakeStoreProductServicedtos();
+        requestBody.setTitle(title);
+        requestBody.setDescription(description);
+        requestBody.setImageUrl(imageurl);
+        requestBody.setCategory(cattitle);
+   FakeStoreProductServicedtos fakestoreresponse=restTemplate.postForObject("https://fakestoreapi.com/products/",requestBody, FakeStoreProductServicedtos.class);
+
+        response=converttoproduct(fakestoreresponse);
+        return response;
+    }
+
 }

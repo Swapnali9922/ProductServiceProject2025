@@ -1,5 +1,6 @@
 package com.sapna.productserviceproject.controller;
 
+import com.sapna.productserviceproject.Exception.ProductNotFoundException;
 import com.sapna.productserviceproject.dtos.CreateProductRequestDto;
 import com.sapna.productserviceproject.models.Product;
 import com.sapna.productserviceproject.service.FakeStoreProductService;
@@ -18,8 +19,14 @@ public class ProductController {
     }
     //get single product
     @GetMapping("/product/{id}")
-    public Product getProductById(@PathVariable("id") Integer id){
-        return service.getProductById(id);
+    public Product getProductById(@PathVariable("id") Integer id) throws ProductNotFoundException {
+        if(id==100)
+            throw new IllegalArgumentException("id should not be 100");
+        Product product=service.getProductById(id);
+        if(product==null){
+            throw new ProductNotFoundException("product not found");
+        }
+        return product;
     }
 
     //get All products
